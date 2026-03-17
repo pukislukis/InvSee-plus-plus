@@ -58,6 +58,26 @@ public class InvseeCommandExecutor implements CommandExecutor {
 
         final InvseeAPI api = plugin.getApi();
         final Target target = isUuid ? Target.byUniqueId(uuid) : Target.byUsername(playerNameOrUUID);
+
+        // Check invseelock: block spectating if the target has their inventory locked and the sender cannot bypass it.
+        if (!player.hasPermission(InvseeLockManager.INVSEELOCK_ADMIN_PERMISSION)) {
+            UUID lockedUuid = null;
+            if (isUuid) {
+                lockedUuid = uuid;
+            } else {
+                Player targetOnline = plugin.getServer().getPlayerExact(playerNameOrUUID);
+                if (targetOnline != null) {
+                    lockedUuid = targetOnline.getUniqueId();
+                } else {
+                    lockedUuid = api.getUuidCache().get(playerNameOrUUID);
+                }
+            }
+            if (lockedUuid != null && plugin.getLockManager().isLocked(lockedUuid)) {
+                player.sendMessage(ChatColor.RED + "Player " + playerNameOrUUID + " has locked their inventory from being spectated.");
+                return true;
+            }
+        }
+
         //TODO why not just: plugin.getInventoryCreationOptions() ?
         final CreationOptions<PlayerInventorySlot> creationOptions = CreationOptions.defaultMainInventory(plugin)
                 .withTitle(plugin.getTitleForInventory())
