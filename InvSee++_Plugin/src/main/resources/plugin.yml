@@ -25,6 +25,11 @@ commands:
     permission: invseeplusplus.reload
     usage: "/<command>"
     aliases: ["isppreload", "invsee++reload", "is++reload"]
+  invseelock:
+    description: Lock or unlock your inventory from being spectated
+    permission: invseeplusplus.invseelock
+    usage: "/invseelock <on|off> [player]"
+    aliases: [invlock, iseelock]
 
 permissions:
   invseeplusplus.*:
@@ -41,6 +46,8 @@ permissions:
       invseeplusplus.give.*: true
       invseeplusplus.clear.*: true
       invseeplusplus.clone.*: true
+      invseeplusplus.invseelock: true
+      invseeplusplus.invseelock.admin: true
     default: false
 
   invseeplusplus.view:
@@ -108,3 +115,10 @@ permissions:
   invseeplusplus.bypass-exempt.endersee:
     description: Ignore whether target players are exempted from having their enderchest spectated
     default: false
+
+  invseeplusplus.invseelock:
+    description: Allows a player to lock or unlock their own inventory from being spectated
+    default: true
+  invseeplusplus.invseelock.admin:
+    description: Allows toggling invseelock for other players and bypassing other players' invseelock
+    default: op

@@ -61,6 +61,8 @@ public class InvseePlusPlus extends JavaPlugin implements com.janboerman.invsee.
     private CreationOptions<EnderChestSlot> platformCreationOptionsEnderInventory;
     private boolean dirtyConfig = false;
 
+    private InvseeLockManager lockManager;
+
     private Metrics bstats;
 
     public InvseePlusPlus() {
@@ -116,6 +118,9 @@ public class InvseePlusPlus extends JavaPlugin implements com.janboerman.invsee.
 
         assert this.api != null : "did not set the InvseeAPI instance!";
 
+        //initialize lock manager
+        this.lockManager = new InvseeLockManager(this);
+
         //set up api creation options
         FileConfiguration config = loadConfig();
         tabCompleteOfflinePlayers(config); //set config value
@@ -157,13 +162,16 @@ public class InvseePlusPlus extends JavaPlugin implements com.janboerman.invsee.
         PluginCommand invseeCommand = getCommand("invsee");
         PluginCommand enderseeCommand = getCommand("endersee");
         PluginCommand reloadCommand = getCommand("invseeplusplusreload");
+        PluginCommand invseelockCommand = getCommand("invseelock");
 
         invseeCommand.setExecutor(new InvseeCommandExecutor(this));
         enderseeCommand.setExecutor(new EnderseeCommandExecutor(this));
         reloadCommand.setExecutor(new ReloadCommandExecutor(this));
+        invseelockCommand.setExecutor(new InvseeLockCommandExecutor(this));
 
         invseeCommand.setTabCompleter(tabCompleter);
         enderseeCommand.setTabCompleter(tabCompleter);
+        invseelockCommand.setTabCompleter(new InvseeLockTabCompleter(this));
     }
 
     private void setupEvents(Scheduler scheduler, OfflinePlayerProvider playerDatabase) {
@@ -213,6 +221,14 @@ public class InvseePlusPlus extends JavaPlugin implements com.janboerman.invsee.
      */
     public InvseeAPI getApi() {
         return api;
+    }
+
+    /**
+     * Get the InvseeLockManager instance.
+     * @return the lock manager
+     */
+    public InvseeLockManager getLockManager() {
+        return lockManager;
     }
 
     /**
